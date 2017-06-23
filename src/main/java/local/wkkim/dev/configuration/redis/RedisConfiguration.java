@@ -1,8 +1,11 @@
 package local.wkkim.dev.configuration.redis;
 
+import java.util.Properties;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
@@ -22,14 +25,17 @@ public class RedisConfiguration implements InitializingBean
 {
 	private static final Logger LOG = LoggerFactory.getLogger(RedisConfiguration.class);
 	
+	@Autowired
+	private Properties globalProp;
+	
 	/* Redis Connection Bean */
 	@Bean
 	public JedisConnectionFactory jedisConnectionFactory()
 	{
 		JedisConnectionFactory jedisConnectionFactory = new JedisConnectionFactory();
 		
-		jedisConnectionFactory.setHostName("192.168.1.170");
-		jedisConnectionFactory.setPort(6379);
+		jedisConnectionFactory.setHostName(globalProp.getProperty("redis.address"));
+		jedisConnectionFactory.setPort(Integer.parseInt(globalProp.getProperty("redis.port")));
 		
 		return jedisConnectionFactory;
 	}
@@ -105,7 +111,7 @@ public class RedisConfiguration implements InitializingBean
 	@Bean
 	public ChannelTopic channelTopic()
 	{
-		String key = "QUEUE";
+		String key = globalProp.getProperty("redis.session.key");
 		
 		return new ChannelTopic(key);
 	}
