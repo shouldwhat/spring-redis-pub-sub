@@ -19,6 +19,7 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import local.wkkim.dev.service.subscribe.RedisSubscriber;
+import redis.clients.jedis.JedisPoolConfig;
 
 @Configuration
 public class RedisConfiguration implements InitializingBean
@@ -28,6 +29,29 @@ public class RedisConfiguration implements InitializingBean
 	@Autowired
 	private Properties globalProp;
 	
+	@Bean
+	public JedisPoolConfig jedisPoolConfig() {
+		
+		JedisPoolConfig poolConfig = new JedisPoolConfig();
+		
+		/* 최대 커넥션 수를 지정한다. */
+		poolConfig.setMaxTotal(Integer.parseInt(globalProp.getProperty("redis.max-conn")));
+
+		/* 
+		 * true : 커넥션 풀이 가득 찼을 경우 준비된 연결이 도착하기를 기다린다.  
+		 * false : 기다리지 않고 NoSuchElementException을 발생시킨다. 
+		 */
+		poolConfig.setBlockWhenExhausted(true);
+		
+		/* 커넥션 풀에서 커넥션을 얻어올 때 테스트를 실행한다. */
+		poolConfig.setTestOnBorrow(false);
+		
+		/* 커넥션 풀로 커넥션을 반납할 때 테스트를 실행한다. */
+		poolConfig.setTestOnReturn(false);
+		
+		return poolConfig;
+	}
+	
 	/* Redis Connection Bean */
 	@Bean
 	public JedisConnectionFactory jedisConnectionFactory()
@@ -36,6 +60,8 @@ public class RedisConfiguration implements InitializingBean
 		
 		jedisConnectionFactory.setHostName(globalProp.getProperty("redis.address"));
 		jedisConnectionFactory.setPort(Integer.parseInt(globalProp.getProperty("redis.port")));
+		jedisConnectionFactory.setUsePool(true);
+		jedisConnectionFactory.setPoolConfig(jedisPoolConfig());
 		
 		return jedisConnectionFactory;
 	}
