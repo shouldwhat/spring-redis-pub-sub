@@ -55,6 +55,11 @@ public class RedisConfiguration implements InitializingBean
 		 */
 		poolConfig.setMaxWaitMillis(Integer.parseInt(globalProp.getProperty("redis.max-idle")));
 		
+		/*
+		 * 풀에서 idle 상태로 유지되는 커넥션을 해제시키는 시간을 지정한다.
+		 */
+		poolConfig.setTimeBetweenEvictionRunsMillis(Integer.parseInt(globalProp.getProperty("redis.max-idle-alive")));
+		
 		/* 
 		 * true : 커넥션 풀이 가득 찼을 경우 준비된 연결이 도착하기를 기다린다.  
 		 * false : 기다리지 않고 NoSuchElementException을 발생시킨다. 
