@@ -35,11 +35,26 @@ public class RedisConfiguration implements InitializingBean
 		JedisPoolConfig poolConfig = new JedisPoolConfig();
 		
 		/* 
-		 * 최대 커넥션 수를 지정한다.
+		 * 커녁센 풀의 최대 커넥션 수를 지정한다.
 		 * Redis Server의 .conf 파일에서 maxconnection 옵션을 지정해주어야 한다. 디폴트:10000 
 		 */
 		poolConfig.setMaxTotal(Integer.parseInt(globalProp.getProperty("redis.max-conn")));
 
+		/*
+		 * 사용되지 않고 풀에 저장될 수 있는 최소 커넥션 수를 지정한다.
+		 */
+		poolConfig.setMinIdle(Integer.parseInt(globalProp.getProperty("redis.min-idle")));
+		
+		/*
+		 * 사용되지 않고 풀에 저장될 수 있는 최대 커넥션 수를 지정한다.
+		 */
+		poolConfig.setMaxIdle(Integer.parseInt(globalProp.getProperty("redis.max-idle")));
+		
+		/*
+		 * 커넥션이 모두 사용 중일 때 요청을 대기하는 최대 시간을 지정한다.  
+		 */
+		poolConfig.setMaxWaitMillis(Integer.parseInt(globalProp.getProperty("redis.max-idle")));
+		
 		/* 
 		 * true : 커넥션 풀이 가득 찼을 경우 준비된 연결이 도착하기를 기다린다.  
 		 * false : 기다리지 않고 NoSuchElementException을 발생시킨다. 
