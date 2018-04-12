@@ -34,7 +34,10 @@ public class RedisConfiguration implements InitializingBean
 		
 		JedisPoolConfig poolConfig = new JedisPoolConfig();
 		
-		/* 최대 커넥션 수를 지정한다. */
+		/* 
+		 * 최대 커넥션 수를 지정한다.
+		 * Redis Server의 .conf 파일에서 maxconnection 옵션을 지정해주어야 한다. 디폴트:10000 
+		 */
 		poolConfig.setMaxTotal(Integer.parseInt(globalProp.getProperty("redis.max-conn")));
 
 		/* 
